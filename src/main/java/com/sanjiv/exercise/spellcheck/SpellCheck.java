@@ -1,6 +1,5 @@
 package com.sanjiv.exercise.spellcheck;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -13,55 +12,75 @@ import org.apache.lucene.search.spell.PlainTextDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Sanjiv on 7/22/17.
  */
 public class SpellCheck {
+    private static final Logger logger = LoggerFactory.getLogger(SpellCheck.class);
 
     private static final String RESOURCES_PATH = "resources";
     private static final String DICTIONARY_FILENAME = "US.dic";
-    private File dictionary;
     private SpellChecker spellChecker;
+
+    public enum SpellingStatus {
+        CORRECT,
+        INCORRECT;
+    }
 
     public SpellCheck() throws IOException, URISyntaxException {
         init();
     }
 
     private void init() throws IOException, URISyntaxException {
-        loadDictionary();
-
         initSpellChecker();
     }
 
-    public void suggest(String word, int numberOfSuggestions) throws IOException {
-        String[] suggestions = spellChecker.suggestSimilar("misspelt", numberOfSuggestions);
-        System.out.println("Suggestions: " + Arrays.toString(suggestions));
+
+    public SpellingStatus checkSpelling(String word) throws IOException {
+        return (spellChecker.exist(word) ? SpellingStatus.CORRECT : SpellingStatus.INCORRECT);
+    }
+
+    /**
+     * The suggest method finds suggestions for the specified word for the specified numberOfSuggestions and returns an
+     * array of suggestion strings.
+     *
+     * @param word
+     * @param numberOfSuggestions
+     * @return String[] of suggestions.
+     * @throws IOException
+     */
+    public String[] suggest(String word, int numberOfSuggestions) throws IOException {
+        String[] suggestions = spellChecker.suggestSimilar(word, numberOfSuggestions);
+
+        return suggestions;
     }
 
     private void initSpellChecker() throws IOException, URISyntaxException {
         Directory directory = FSDirectory.open(Paths.get(RESOURCES_PATH));
         spellChecker = new SpellChecker(directory);
 
-        IndexWriterConfig config = new IndexWriterConfig();//Version.LUCENE_6_6_0, null);
-//        spellChecker.indexDictionary(new PlainTextDictionary(Paths.get(     "resources/US.dic")), config, false);
+        IndexWriterConfig config = new IndexWriterConfig();
 
-        URL resource = SpellCheck.class.getClassLoader().getResource("US.dic");
+        URL resource = SpellCheck.class.getClassLoader().getResource(DICTIONARY_FILENAME);
         Path path = Paths.get(resource.toURI());
         spellChecker.indexDictionary(new PlainTextDictionary(path), config, false);
     }
 
-    private void loadDictionary() {
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        dictionary = new File(classLoader.getResource(DICTIONARY_FILENAME).getFile());
-    }
-
-
-
     public static void main(String[] args) throws IOException, URISyntaxException {
 
+        // NOTE: See Unit tests under test folder.
         SpellCheck spellCheck = new SpellCheck();
-        spellCheck.suggest("misspelt", 5);
-        spellCheck.suggest("apropos", 5);
+
+        logger.info("Check spelling for word [aaa]: " + spellCheck.checkSpelling("aaa"));
+        logger.info("Check spelling for word [Sanjiv]: " + spellCheck.checkSpelling("sanjiv"));
+        logger.info("Check spelling for word [god]: " + spellCheck.checkSpelling("god"));
+
+        logger.info("Suggestions: " + Arrays.toString(spellCheck.suggest("misspelt", 5)));
+        logger.info("Suggestions: " + Arrays.toString(spellCheck.suggest("apropos", 5)));
+        logger.info("Suggestions: " + Arrays.toString(spellCheck.suggest("aaa", 5)));
+        logger.info("Suggestions: " + Arrays.toString(spellCheck.suggest("sound", 5)));
     }
 }
