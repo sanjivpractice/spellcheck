@@ -38,7 +38,13 @@ public class SpellCheck {
         initSpellChecker();
     }
 
-
+    /**
+     * This method checks the spelling for the specified word.  If the spelling is found to be correct then it will
+     * return SpellingStatus.CORRECT else it will return SpellingStatus.INCORRECT.
+     * @param word
+     * @return SpellingStatus.CORRECT if spelling is correct else SpellingStatus.INCORRECT
+     * @throws IOException when error occurs trying to access dictionary.
+     */
     public SpellingStatus checkSpelling(String word) throws IOException {
         return (spellChecker.exist(word) ? SpellingStatus.CORRECT : SpellingStatus.INCORRECT);
     }
