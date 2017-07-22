@@ -75,7 +75,7 @@ public class SpellCheck {
         SpellCheck spellCheck = new SpellCheck();
 
         logger.info("Check spelling for word [aaa]: " + spellCheck.checkSpelling("aaa"));
-        logger.info("Check spelling for word [Sanjiv]: " + spellCheck.checkSpelling("sanjiv"));
+        logger.info("Check spelling for word [sanjiv]: " + spellCheck.checkSpelling("sanjiv"));
         logger.info("Check spelling for word [god]: " + spellCheck.checkSpelling("god"));
 
         logger.info("Suggestions: " + Arrays.toString(spellCheck.suggest("misspelt", 5)));
