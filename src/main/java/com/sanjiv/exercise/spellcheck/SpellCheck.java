@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class SpellCheck {
     private static final Logger logger = LoggerFactory.getLogger(SpellCheck.class);
 
-    private static final String RESOURCES_PATH = "resources";
+    private static final String RESOURCES_PATH = "resources/luceneSpellCheck";
     private static final String DICTIONARY_FILENAME = "US.dic";
     private SpellChecker spellChecker;
 
