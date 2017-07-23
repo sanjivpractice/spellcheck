@@ -22,7 +22,7 @@ public class SpellCheck {
     private static final Logger logger = LoggerFactory.getLogger(SpellCheck.class);
 
     private static final String RESOURCES_PATH = "resources/luceneSpellCheck";
-    private static final String DICTIONARY_FILENAME = "US.dic";
+    private static final String DICTIONARY_FILENAME = "dictionary/US.dic";
     private SpellChecker spellChecker;
 
     public enum SpellingStatus {
